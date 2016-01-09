@@ -107,9 +107,17 @@ Qed.
 Theorem andb_true_elim2 : forall b c : bool,
   andb b c = true -> c = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
-
+ intros. destruct b. 
+   Case "b= true".
+     rewrite <- H. reflexivity.
+   Case "b = false".  
+     rewrite <- H. destruct c. 
+       SCase "c = true".
+         rewrite H. reflexivity. 
+       SCase "c = false".
+         reflexivity. 
+Qed. 
+         
 (** There are no hard and fast rules for how proofs should be
     formatted in Coq -- in particular, where lines should be broken
     and how sections of the proof should be indented to indicate their
@@ -223,25 +231,35 @@ Proof.
 
 Theorem mult_0_r : forall n:nat,
   n * 0 = 0.
-Proof.
-  (* FILL IN HERE *) Admitted.
-
+Proof. intros. induction n as [|n'].
+Case "0 case".
+  reflexivity. 
+Case "S n case".
+  simpl. rewrite IHn'.  reflexivity. 
+Qed.  
 Theorem plus_n_Sm : forall n m : nat, 
   S (n + m) = n + (S m).
-Proof. 
-  (* FILL IN HERE *) Admitted.
-
+Proof. intros. induction n as [|n'].
+Case "n is zero".
+  reflexivity.
+Case "n non zero".
+  simpl. rewrite IHn'. reflexivity. 
+Qed.  
 
 Theorem plus_comm : forall n m : nat,
   n + m = m + n.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros. induction n as [|n'].
+ simpl. rewrite plus_0_r. reflexivity. 
+ simpl. rewrite IHn'.  rewrite plus_n_Sm. reflexivity. 
+Qed. 
 
 
 Theorem plus_assoc : forall n m p : nat,
   n + (m + p) = (n + m) + p.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros. induction n as [|n']. 
+ reflexivity.
+ simpl. rewrite IHn'. reflexivity. 
+Qed. 
 (** [] *)
 
 (** **** Exercise: 2 stars (double_plus)  *)
@@ -257,15 +275,18 @@ Fixpoint double (n:nat) :=
 (** Use induction to prove this simple fact about [double]: *)
 
 Lemma double_plus : forall n, double n = n + n .
-Proof.  
-  (* FILL IN HERE *) Admitted.
+Proof. intros. induction n.
+  reflexivity. 
+  simpl. rewrite IHn. rewrite <- plus_n_Sm. reflexivity. 
+Qed. 
+
 (** [] *)
 
 
 (** **** Exercise: 1 star (destruct_induction)  *)
 (** Briefly explain the difference between the tactics
     [destruct] and [induction].  
-
+ya know. 
 (* FILL IN HERE *)
 
 *)
@@ -355,24 +376,39 @@ Proof.
 
 Theorem plus_swap : forall n m p : nat, 
   n + (m + p) = m + (n + p).
-Proof.
-  (* FILL IN HERE *) Admitted.
-
-
+Proof. intros. assert (H : n + (m + p) = (m + p) + n).
+  rewrite plus_comm. reflexivity. 
+  rewrite H. assert (H2: p + n = (n + p)). rewrite plus_comm. reflexivity. 
+  rewrite <- H2. rewrite plus_assoc. reflexivity. 
+Qed. 
 (** Now prove commutativity of multiplication.  (You will probably
     need to define and prove a separate subsidiary theorem to be used
     in the proof of this one.)  You may find that [plus_swap] comes in
     handy. *)
 
+Theorem backmult : forall m n : nat, (m * S n) = m + m *n .
+Proof. intros. simpl. 
+ induction m.  simpl.  reflexivity. 
+ simpl. rewrite IHm. rewrite plus_swap. reflexivity.
+Qed. 
+
+  
+
+
 Theorem mult_comm : forall m n : nat,
  m * n = n * m.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros. 
+ induction n as [| n'].  simpl.  rewrite mult_0_r.  reflexivity. 
+ simpl. rewrite <- IHn'. 
+ induction m as [|m'].  simpl. reflexivity. 
+ simpl. rewrite plus_n_Sm. rewrite backmult. 
+ rewrite plus_n_Sm.  rewrite plus_n_Sm.  rewrite plus_n_Sm. rewrite plus_swap. reflexivity. 
+Qed. 
 (** [] *)
 
 (** **** Exercise: 2 stars, optional (evenb_n__oddb_Sn)  *)
 
-(** Prove the following simple fact: *)
+(** Prove the following simple fact:  PAUL KLINE *)
 
 Theorem evenb_n__oddb_Sn : forall n : nat,
   evenb n = negb (evenb (S n)).
