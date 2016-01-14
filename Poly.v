@@ -1217,16 +1217,16 @@ Qed.
 (** Multiplication *)
 
 Definition mult (n m : nat) : nat := 
-  (fun (X : Type) (f : X -> X) (x : X) =>  ). 
+  (fun (X : Type) (f : X -> X)  => (m X) (n X f) ). 
 
 Example mult_1 : mult one one = one.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed. 
 
 Example mult_2 : mult zero (plus three three) = zero.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed. 
 
 Example mult_3 : mult two three = plus three three.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed. 
 
 (** Exponentiation *)
 
@@ -1235,8 +1235,8 @@ Proof. (* FILL IN HERE *) Admitted.
     "Universe inconsistency" error, try iterating over a different
     type: [nat] itself is usually problematic. *)
 
-Definition exp (n m : nat) : nat :=
-  (* FILL IN HERE *) admit.
+Definition exp (n m : nat) : nat := admit. (*
+ (fun (X : Type) (f : X -> X) => (n X) (mult m)) admit.  *)
 
 Example exp_1 : exp two two = plus two two.
 Proof. (* FILL IN HERE *) Admitted.
