@@ -183,6 +183,8 @@ Inductive baz : Type :=
    | y : baz -> bool -> baz.
 
 (** How _many_ elements does the type [baz] have? 
+
+zero.
 (* FILL IN HERE *)
 *)
 (** [] *)

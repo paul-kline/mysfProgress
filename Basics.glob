@@ -1,4 +1,4 @@
-DIGEST f03819f61855066b79bcdd334be58d1f
+DIGEST b92eb8bff0b2ff26f0e626a1210b7b8a
 FBasics
 def 361:365 <> admit
 R379:379 Basics <> T var
@@ -206,7 +206,7 @@ R14257:14257 Basics <> n var
 R14270:14270 Basics Playground1 O constr
 R14275:14275 Basics Playground1 O constr
 R14283:14283 Basics Playground1 S constr
-R14412:14422 Basics Playground1 <> mod
+R14412:14422 Basics <> <> mod
 def 14437:14444 <> minustwo
 R14451:14453 Coq.Init.Datatypes <> nat ind
 R14458:14460 Coq.Init.Datatypes <> nat ind
@@ -310,7 +310,7 @@ R17693:17693 Basics <> n var
 R17699:17699 Coq.Init.Datatypes <> S constr
 R17705:17705 Coq.Init.Datatypes <> S constr
 R17713:17717 Basics <> minus def
-R17968:17978 Basics Playground2 <> mod
+R17968:17978 Basics <> <> mod
 def 17991:17993 <> exp
 R18009:18011 Coq.Init.Datatypes <> nat ind
 R18016:18018 Coq.Init.Datatypes <> nat ind

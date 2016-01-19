@@ -76,8 +76,8 @@ Theorem silly_ex :
      (forall n, evenb n = true -> oddb (S n) = true) ->
      evenb 3 = true ->
      oddb 4 = true.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros.  apply H. apply H0. 
+Qed. 
 (** [] *)
 
 (** To use the [apply] tactic, the (conclusion of the) fact
@@ -115,14 +115,17 @@ Proof.
 Theorem rev_exercise1 : forall (l l' : list nat),
      l = rev l' ->
      l' = rev l.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros. SearchAbout rev.  rewrite H. SearchAbout rev. rewrite rev_involutive.
+reflexivity. 
+Qed. 
 (** [] *)
 
 (** **** Exercise: 1 star, optional (apply_rewrite)  *)
 (** Briefly explain the difference between the tactics [apply] and
     [rewrite].  Are there situations where both can usefully be
     applied?
+
+apply does all. rewrite baby step.
   (* FILL IN HERE *)
 *)
 (** [] *)
@@ -182,8 +185,8 @@ Example trans_eq_exercise : forall (n m o p : nat),
      m = (minustwo o) ->
      (n + p) = m ->
      (n + p) = (minustwo o). 
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros. apply trans_eq with m. apply H0. apply H. 
+Qed. 
 (** [] *)
 
 
@@ -268,8 +271,9 @@ Example sillyex1 : forall (X : Type) (x y z : X) (l j : list X),
      x :: y :: l = z :: j ->
      y :: l = x :: j ->
      x = y.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros. inversion H. inversion H0. symmetry. apply H2.
+Qed. 
+
 (** [] *)
 
 Theorem silly6 : forall (n : nat),
@@ -289,8 +293,8 @@ Example sillyex2 : forall (X : Type) (x y z : X) (l j : list X),
      x :: y :: l = [] ->
      y :: l = z :: j ->
      x = z.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros. inversion H. 
+Qed. 
 (** [] *)
 
 (** While the injectivity of constructors allows us to reason
@@ -312,13 +316,14 @@ Proof. intros A B f x y eq. rewrite eq.  reflexivity.  Qed.
 
 Theorem beq_nat_0_l : forall n,
    beq_nat 0 n = true -> n = 0.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros. SearchAbout beq_nat. induction n.  reflexivity. simpl. simpl in H. inversion H. 
+Qed. 
 
 Theorem beq_nat_0_r : forall n,
    beq_nat n 0 = true -> n = 0.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros. induction n.  reflexivity.  simpl in H. inversion H. 
+Qed. 
+
 (** [] *)
 
 
@@ -377,12 +382,29 @@ Proof.
 (** **** Exercise: 3 stars (plus_n_n_injective)  *)
 (** Practice using "in" variants in this exercise. *)
 
+ 
+
+
+
 Theorem plus_n_n_injective : forall n m,
      n + n = m + m ->
      n = m.
 Proof.
-  intros n. induction n as [| n'].
+  intros n. induction n as [| n']. intros. induction m.  reflexivity. 
+ inversion H.  intros. simpl in H. Check plus_n_Sm. (*PAUL KLINE *) in H.
+symmetry in H. inversion H. 
+
+
+
+ 
+assert ( n' + S (S n') = S (S n') + n') . rewrite plus_comm.  reflexivity. rewrite H in H0. 
+simpl in H0. symmetry in H0.  inversion H0.   inversion H.  SearchAbout "Sn". inversion H0.  
+
+
     (* Hint: use the plus_n_Sm lemma *)
+intros. induction m.  reflexivity.   inversion H.
+intros. SearchAbout "plus". inversion H. rewrite plus_n_Sm in H1. 
+Check plus_n_Sm. 
     (* FILL IN HERE *) Admitted.
 (** [] *)
 
