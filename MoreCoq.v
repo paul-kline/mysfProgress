@@ -382,30 +382,70 @@ Proof.
 (** **** Exercise: 3 stars (plus_n_n_injective)  *)
 (** Practice using "in" variants in this exercise. *)
 
+Theorem mustbezero : forall n : nat, n + n = n -> n = 0.
+intros.  induction n as [| n'].  reflexivity. simpl in H . rewrite plus_n_Sm in H. 
+inversion H. 
+rewrite <- plus_n_Sm in H1.
+inversion H1. rewrite <- plus_n_Sm in H2. inversion H2. apply plus_id_example in H2.
+rewrite <- H2 in IHn'. remember (S (n' + n') + S (n' + n')) as p. rewrite <- H0 in IHn'. 
+Abort. (*
+rewrit
+inversion H2.    remember n' as p.  
+ inversion H. >  rewrite succ1 in H.  inversion H. rewrite <- plus_n_Sm in H1.
+rewrite <- plus_n_Sm in H. rewrite <- H1 in IHn'.
+simpl in IHn'. rewrite succ1 in IHn'. rewrite succ1 in IHn'.  rewrite succ1 in H1. rewrite H1 in IHn'. rewrite <- H1 in H. 
+inversion H. n' into p.  in IHn'.  rewrite <- succ1 in H1.  rewrite H1 in H2.
+
+rewrite succ1 in H2. rewrite <- H2 in IHn'.  
+
+assert (n' + n' +n' = (n' + n' ) + n'). reflexivity.   
+
+
+ rewrite plus_comm in IHn'. rewrite succ1 in IHn'.  rewrite H in IHn'. 
+rewrite succ1 in IHn'. 
+rewrite <- H in IHn'.     inversion H1.  inversion H.      
+simpl in H. inversion H. rewrite <- H in H1.   rewrite <- plus_n_Sm in H1.
+SearchAbout beq_nat.  inversion H.  rewrite <- plus_n_Sm in H2. 
+inversion H.  SearchAbout "+". apply plus_id_example in H2.
+rewrite <- plus_n_Sm in H3. 
+rewrite plus_n_Sm in H1.
+rewrite succ1 in H1. symmetry in H1. 
+rewrite succ1 in H3. symmetry in H3.
+assert (n' + n' = n'). rewrite <- H2.
+rewrite succ1. rewrite <- H3.
+
+inversion H2. 
+inversion H3.   
+rewrite H3.   simpl.     
+ inversion H.
+SearchAbout "+". rewrite succ1 in H2. inversion H2.  
+ rewrite <- H in H1. 
+inversion H1. 
+ rewrite <- plus_n_Sm in H1.  inversion H2.   
+
  
+*)
+
+Theorem m2 : forall n : nat, n + n = 2 * n.
+Proof. intros. simpl.  rewrite plus_0_r.  reflexivity. 
+Qed.
+
+Theorem t : forall n :nat, n + n = 0 -> n = 0. 
+Proof. intros.  induction n.  reflexivity. rewrite <- succ1 in H.  inversion H. 
+Qed.  
+
+Theorem test : forall m : nat, 1 + 1 = m + m -> 1 = m.
+Proof. intros. simpl. simpl in H.  induction m.  simpl in H.  inversion H. rewrite <- succ1 in H. 
+rewrite <- plus_n_Sm in H. inversion H. simpl in H1. symmetry in H1. apply t in H1. rewrite H1. reflexivity.
 
 
+Theorem plus_n_n_injective : forall n m, n + n = m + m -> n = m. 
+  intros n. induction n as [| n']. intros. simpl in H.  symmetry in H.  apply t in H.  rewrite H. reflexivity. 
+intros. 
+  induction m. simpl in H. inversion H. rewrite <- succ1 in H. rewrite <- succ1 in H. rewrite <- plus_n_Sm in H. rewrite <- plus_n_Sm in H.
+inversion H. apply IHn' in H1. rewrite H1.  reflexivity. 
+Qed. 
 
-Theorem plus_n_n_injective : forall n m,
-     n + n = m + m ->
-     n = m.
-Proof.
-  intros n. induction n as [| n']. intros. induction m.  reflexivity. 
- inversion H.  intros. simpl in H. Check plus_n_Sm. (*PAUL KLINE *) in H.
-symmetry in H. inversion H. 
-
-
-
- 
-assert ( n' + S (S n') = S (S n') + n') . rewrite plus_comm.  reflexivity. rewrite H in H0. 
-simpl in H0. symmetry in H0.  inversion H0.   inversion H.  SearchAbout "Sn". inversion H0.  
-
-
-    (* Hint: use the plus_n_Sm lemma *)
-intros. induction m.  reflexivity.   inversion H.
-intros. SearchAbout "plus". inversion H. rewrite plus_n_Sm in H1. 
-Check plus_n_Sm. 
-    (* FILL IN HERE *) Admitted.
 (** [] *)
 
 (* ###################################################### *)
