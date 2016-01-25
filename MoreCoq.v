@@ -912,18 +912,13 @@ Theorem combine_split : forall X Y (l : list (X * Y)) l1 l2,
   combine l1 l2 = l.
 Proof. intros. generalize dependent l1. generalize dependent l2.  simpl. induction l. simpl.
 intros. inversion H.  reflexivity.
-intros. apply IHl.   simpl. 
-intros. destruct l.  simpl.  inversion H. reflexivity. 
-simpl. destruct p. simpl.  simpl in H. inversion H. 
-intros.  apply IHl1.    inversion H. destruct p.  simpl in H1. simpl in H.    
- simpl in H.   generalize dependent l2.   induction l.  simpl. intros. induction H. 
-induction l1. simpl. reflexivity. induction l2.  simpl. reflexivity.  simpl.  simpl.  
-simpl. 
-  induction l2.  reflexivity. 
- simpl. reflexivity. unfold combine in IHl1.  simpl in IHl1.  destruct (x :: l1).   simpl.   
- inversion H. reflexivity. induction l1.  simpl in H. destruct x. inversion H.  simpl.    inversion H.  simpl in H.   inversion H.   unfold split in H.  induction l. simpl in H. inversion H.  simpl. reflexivity. 
- simpl.   unfold combine. 
-  (* FILL IN HERE *) Admitted.
+intro l2. induction l2. intros. simpl in H.  destruct x.  inversion H.
+   simpl. destruct x. simpl. intros. inversion H.
+induction l1.  simpl. apply f_equal. simpl. apply IHl. inversion H1. 
+simpl.  apply f_equal. apply IHl.
+destruct (split l). simpl.  reflexivity. 
+Qed. 
+
 (** [] *)
 
 (** Sometimes, doing a [destruct] on a compound expression (a
@@ -991,16 +986,21 @@ Proof.
 Theorem bool_fn_applied_thrice : 
   forall (f : bool -> bool) (b : bool), 
   f (f (f b)) = f b.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros. destruct b eqn:hb. destruct (f true) eqn :fb. rewrite fb.  rewrite fb.  reflexivity. 
+destruct (f false) eqn : hfalse. rewrite fb.  reflexivity.  rewrite hfalse.  reflexivity.
+destruct (f false) eqn : a. destruct (f true) eqn : htrue.  exact htrue.  exact a. rewrite a.  rewrite a. 
+reflexivity. 
+Qed. 
 (** [] *)
 
 (** **** Exercise: 2 stars (override_same)  *)
 Theorem override_same : forall (X:Type) x1 k1 k2 (f : nat->X),
   f k1 = x1 -> 
   (override f k1 x1) k2 = f k2.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros. simpl. unfold override.  destruct (beq_nat k1 k2) eqn: b1. rewrite <- H. 
+SearchAbout beq_nat. apply beq_nat_true in b1.  rewrite b1.  reflexivity. 
+reflexivity. 
+Qed. 
 (** [] *)
 
 (* ################################################################## *)
@@ -1084,8 +1084,10 @@ Proof.
 (** **** Exercise: 3 stars (beq_nat_sym)  *)
 Theorem beq_nat_sym : forall (n m : nat),
   beq_nat n m = beq_nat m n.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intro n.  induction n . intro m. induction m . reflexivity. 
+simpl.  reflexivity.
+intros. symmetry. destruct m eqn : hm.  simpl.  reflexivity.  simpl. symmetry. apply IHn.
+Qed. 
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced, optional (beq_nat_sym_informal)  *)
@@ -1104,8 +1106,8 @@ Theorem beq_nat_trans : forall n m p,
   beq_nat n m = true ->
   beq_nat m p = true ->
   beq_nat n p = true.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros.  apply beq_nat_true in H.  rewrite <- H in H0. exact H0. 
+Qed. 
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (split_combine)  *)
@@ -1121,11 +1123,16 @@ Proof.
     and [l2] for [split] [combine l1 l2 = (l1,l2)] to be true?)  *)
 
 Definition split_combine_statement : Prop :=
-(* FILL IN HERE *) admit.
+forall (X : Type) (l1 l2 : list X ),length l1 = length l2 -> split (combine l1 l2) = (l1,l2).
+
+Theorem length_0 : forall (X : Type) (l : list X), length l = 0 -> l = []. 
+Proof. intros. induction l.  reflexivity.  simpl in H. inversion H.
+Qed.  
 
 Theorem split_combine : split_combine_statement.
-Proof.
-(* FILL IN HERE *) Admitted.
+Proof. intro X. intros. generalize dependent l2. induction l1. simpl. intros. symmetry in H. apply length_0 in H. rewrite H. reflexivity. destruct l2.  
+simpl. intros.  inversion H. intros.  inversion H. simpl.  apply IHl1 in H1. rewrite H1.  simpl.  reflexivity. 
+Qed. 
 
 
 
@@ -1135,8 +1142,12 @@ Proof.
 Theorem override_permute : forall (X:Type) x1 x2 k1 k2 k3 (f : nat->X),
   beq_nat k2 k1 = false ->
   (override (override f k2 x2) k1 x1) k3 = (override (override f k1 x1) k2 x2) k3.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. simpl.  intro. intro. intro. intro. intros.  generalize dependent k1. generalize dependent k2. simpl. induction k1. intros. unfold override. 
+intros. induction k3.  simpl.  rewrite H.  reflexivity.  simpl.  reflexivity.  intros. unfold override. destruct (beq_nat (S k1) k3) eqn : a.
+destruct k3. apply beq_nat_true in a.  rewrite a in H.  rewrite H.  reflexivity. apply beq_nat_true in a . inversion a.  rewrite H1 in H.  rewrite H. reflexivity. 
+reflexivity. 
+Qed. 
+
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (filter_exercise)  *)
