@@ -50,8 +50,13 @@ Inductive ev : nat -> Prop :=
 
 Theorem double_even : forall n,
   ev (double n).
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros. induction n . simpl. apply ev_0. 
+simpl. apply ev_SS. exact IHn. 
+Qed. 
+
+Require Export MyShortHand.
+  
+
 (** [] *)
 
 
@@ -137,7 +142,9 @@ Proof.
 
 (** **** Exercise: 1 star (varieties_of_beauty)  *)
 (** How many different ways are there to show that [8] is [beautiful]? *)
-
+(* 5 + 3. 3 + 5.
+oh, infininte. why is zero here.
+*)
 (* FILL IN HERE *)
 (** [] *)
 
@@ -192,15 +199,20 @@ Qed.
 
 (** **** Exercise: 2 stars (b_times2)  *)
 Theorem b_times2: forall n, beautiful n -> beautiful (2*n).
-Proof.
-    (* FILL IN HERE *) Admitted.
+Proof. intro n . simpl. intros . rewrite plus_0_r.
+apply b_sum with (n:=n) (m:=n). apply H. apply H. 
+Qed. 
+
 (** [] *)
 
 (** **** Exercise: 3 stars (b_timesm)  *)
 Theorem b_timesm: forall n m, beautiful n -> beautiful (m*n).
-Proof.
-   (* FILL IN HERE *) Admitted.
-(** [] *)
+Proof. intro n. intros. generalize dependent n . induction m.  simpl. 
+intros.  apply b_0. 
+simpl. intros. apply b_sum with (n:= n) (m := m*n).  exact H. 
+apply IHm.  exact H. 
+Qed. 
+
 
 
 (* ####################################################### *)
@@ -252,8 +264,8 @@ Inductive gorgeous : nat -> Prop :=
 (** **** Exercise: 1 star (gorgeous_plus13)  *)
 Theorem gorgeous_plus13: forall n, 
   gorgeous n -> gorgeous (13+n).
-Proof.
-   (* FILL IN HERE *) Admitted.
+Proof. intros. apply g_plus5. apply g_plus5. apply g_plus3. exact H. 
+Qed. 
 (** [] *)
 
 (** *** *)
@@ -305,14 +317,21 @@ Qed.
 (** **** Exercise: 2 stars (gorgeous_sum)  *)
 Theorem gorgeous_sum : forall n m,
   gorgeous n -> gorgeous m -> gorgeous (n + m).
-Proof.
- (* FILL IN HERE *) Admitted.
+Proof. intro. intro. intro.  induction H. s. intros.  exact H. 
+s.  intros. apply g_plus3.  apply IHgorgeous.  exact H0. s. intros.  apply g_plus5. apply IHgorgeous. 
+exact H0.
+Qed.  
+
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (beautiful__gorgeous)  *)
 Theorem beautiful__gorgeous : forall n, beautiful n -> gorgeous n.
-Proof.
- (* FILL IN HERE *) Admitted.
+Proof. intros.  induction H.  apply g_0. apply g_plus3.  apply g_0. apply g_plus5. apply g_0.
+apply gorgeous_sum.
+exact IHbeautiful1. 
+exact IHbeautiful2. 
+Qed. 
+
 (** [] *)
 
 
@@ -323,20 +342,28 @@ Proof.
     You might find the following helper lemma useful. *)
 
 Lemma helper_g_times2 : forall x y z, x + (z + y) = z + x + y.
-Proof.
-   (* FILL IN HERE *) Admitted.
+Proof. intros. rewrite plus_comm. simpl. assert (y + x = x + y). apply plus_comm. 
+assert (z + y + x = z + (y + x)). rewrite plus_assoc. refl. 
+rewrite H0.  rewrite H.  rewrite plus_assoc.  refl. 
+Qed. 
 
 Theorem g_times2: forall n, gorgeous n -> gorgeous (2*n).
 Proof.
    intros n H. simpl. 
-   induction H.
-   (* FILL IN HERE *) Admitted.
+   induction H. apply g_0.  s. apply g_plus3. apply gorgeous_sum.  exact H. apply g_plus3. 
+simpl. rewrite plus_0_r.  exact H. s.  
+apply g_plus5. apply gorgeous_sum.  exact H. apply g_plus5.  rewrite plus_0_r. 
+exact H. 
+Qed. 
+
 (** [] *)
 
 
 
 (** Here is a proof that the inductive definition of evenness implies
 the computational one. *)
+
+(* PAUL KLINE *)
 
 Theorem ev__even : forall n,
   ev n -> even n.
