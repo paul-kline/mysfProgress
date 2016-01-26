@@ -213,8 +213,8 @@ Proof.
 (** **** Exercise: 1 star, optional (proj2)  *)
 Theorem proj2 : forall P Q : Prop, 
   P /\ Q -> Q.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros.  destruct H.  exact H0. 
+Qed.
 (** [] *)
 
 Theorem and_commut : forall P Q : Prop, 
@@ -238,7 +238,8 @@ Theorem and_assoc : forall P Q R : Prop,
 Proof.
   intros P Q R H.
   destruct H as [HP [HQ HR]].
-(* FILL IN HERE *) Admitted.
+split.  split. exact HP.  exact HQ.  exact HR. 
+Qed. 
 (** [] *)
 
 
@@ -277,13 +278,17 @@ Proof.
 
 Theorem iff_refl : forall P : Prop, 
   P <-> P.
-Proof. 
-  (* FILL IN HERE *) Admitted.
+Proof. intros.  split.  intros.  exact H.
+intros.  exact H. 
+Qed. 
 
 Theorem iff_trans : forall P Q R : Prop, 
   (P <-> Q) -> (Q <-> R) -> (P <-> R).
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros.  split.  destruct H. destruct H0.
+ exact (fun p => (H0 (H p))).
+ destruct H.  destruct H0. 
+ exact (fun r => (H1 (H2 r))).
+Qed. 
 
 (** Hint: If you have an iff hypothesis in the context, you can use
     [inversion] to break it into two separate implications.  (Think
@@ -376,15 +381,22 @@ Proof.
 (** **** Exercise: 2 stars (or_distributes_over_and_2)  *)
 Theorem or_distributes_over_and_2 : forall P Q R : Prop,
   (P \/ Q) /\ (P \/ R) -> P \/ (Q /\ R).
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros. destruct  H. destruct H. left. exact H. 
+destruct H0.  left. exact H0.  right.  apply conj. apply H. apply H0. 
+Qed. 
+
 (** [] *)
 
 (** **** Exercise: 1 star, optional (or_distributes_over_and)  *)
 Theorem or_distributes_over_and : forall P Q R : Prop,
   P \/ (Q /\ R) <-> (P \/ Q) /\ (P \/ R).
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros.  split.  intros. split. destruct H.  left. exact H. 
+ right. Check proj1.  apply proj1 in H.  exact H. 
+destruct H.  left. exact H.  right.  destruct H.  exact H0. 
+intros.  destruct H.  destruct H.  left. exact H. destruct H0.  left. exact H0. 
+right.  exact (conj Q R H H0).
+Qed. 
+
 (** [] *)
 
 (* ################################################### *)
@@ -421,20 +433,24 @@ Proof.
 (** **** Exercise: 2 stars, optional (andb_false)  *)
 Theorem andb_false : forall b c,
   andb b c = false -> b = false \/ c = false.
-Proof. 
-  (* FILL IN HERE *) Admitted.
+Proof. intros. destruct b.  simpl in H.  right. exact H. 
+destruct c.  left. reflexivity.  right. reflexivity. 
+Qed. 
 
 (** **** Exercise: 2 stars, optional (orb_false)  *)
 Theorem orb_prop : forall b c,
   orb b c = true -> b = true \/ c = true.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros. destruct b.  simpl in H.  left. reflexivity.  simpl in H. 
+right. exact H. 
+Qed. 
 
 (** **** Exercise: 2 stars, optional (orb_false_elim)  *)
 Theorem orb_false_elim : forall b c,
   orb b c = false -> b = false /\ c = false.
-Proof. 
-  (* FILL IN HERE *) Admitted.
+Proof. intros.  destruct b.  simpl in H.  inversion H.  simpl in H. 
+ split.  reflexivity.  exact H. 
+Qed. 
+
 (** [] *)
 
 
@@ -529,6 +545,9 @@ Notation "~ x" := (not x) : type_scope.
 
 Check not.
 (* ===> Prop -> Prop *)
+Print not.
+Eval compute in (not True).  
+Check (not True). 
 
 (** It takes a little practice to get used to working with
     negation in Coq.  Even though you can see perfectly well why
@@ -569,15 +588,17 @@ Proof.
 (** **** Exercise: 2 stars (contrapositive)  *)
 Theorem contrapositive : forall P Q : Prop,
   (P -> Q) -> (~Q -> ~P).
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros. unfold not.  intros.  apply H in H1.  unfold not in H0.  apply H0.  apply H1. 
+Qed. 
 (** [] *)
 
 (** **** Exercise: 1 star (not_both_true_and_false)  *)
 Theorem not_both_true_and_false : forall P : Prop,
   ~ (P /\ ~P).
-Proof. 
-  (* FILL IN HERE *) Admitted.
+Proof. intros.  unfold not.  intros. 
+destruct H.  apply H0.  apply H. 
+Qed. 
+
 (** [] *)
 
 (** **** Exercise: 1 star, advanced (informal_not_PNP)  *)
@@ -612,7 +633,7 @@ Proof.
     propositions are equivalent. *)
 
 Definition peirce := forall P Q: Prop, 
-  ((P->Q)->P)->P.
+  ((P->Q)->P)->P. 
 Definition classic := forall P:Prop, 
   ~~P -> P.
 Definition excluded_middle := forall P:Prop, 
@@ -620,8 +641,22 @@ Definition excluded_middle := forall P:Prop,
 Definition de_morgan_not_and_not := forall P Q:Prop, 
   ~(~P /\ ~Q) -> P\/Q.
 Definition implies_to_or := forall P Q:Prop, 
-  (P->Q) -> (~P\/Q). 
+  (P->Q) -> (~P\/Q).
 
+Theorem easyon : forall P : Prop, P -> P -> True.
+Proof.  intros. trivial.
+Qed. (*
+Theorem hardon : peirce <-> classic.
+Proof. split.  unfold peirce. unfold classic. 
+intros.  unfold not in H0.   apply H with P. intros.  
+apply H1. apply H0 in P.  P in H0. .   H0. exist P. 
+exact H1.  
+apply easyon in H1. 
+exact P. 
+
+ apply P in H1. SearchAbout "->".  simpl.   destruct H0. apply H with False. .  rewrite H0 in H.  apply H0 in P. . rewrite H0 with (Q:=False) in H0.  P. . apply H0 in H. 
+ simpl.   intros.   
+*)
 (* FILL IN HERE *)
 (** [] *)
 
@@ -631,10 +666,12 @@ axiom (i.e. an instance of excluded middle) for any _particular_ Prop [P].
 Why? Because we cannot prove the negation of such an axiom; if we could,
 we would have both [~ (P \/ ~P)] and [~ ~ (P \/ ~P)], a contradiction. *)
 
-Theorem excluded_middle_irrefutable:  forall (P:Prop), ~ ~ (P \/ ~ P).  
-Proof.
-  (* FILL IN HERE *) Admitted.
 
+Theorem excluded_middle_irrefutable:  forall (P:Prop), ~ ~ (P \/ ~ P).  
+Proof. intros.  unfold not. simpl. intros. case_eq H. right. 
+intros. apply H.  left. exact H0. 
+Qed. 
+ 
 
 (* ########################################################## *)
 (** ** Inequality *)
@@ -658,7 +695,8 @@ Proof.
   intros b H. destruct b.
   Case "b = true". reflexivity.
   Case "b = false".
-    unfold not in H.  
+    unfold not in H.
+Check ex_falso_quodlibet.   
     apply ex_falso_quodlibet.
     apply H. reflexivity.   Qed.
 
@@ -677,15 +715,23 @@ Proof.
 Theorem false_beq_nat : forall n m : nat,
      n <> m ->
      beq_nat n m = false.
-Proof. 
-  (* FILL IN HERE *) Admitted.
+Proof. intro. induction n . intros. unfold not in H. SearchAbout beq_nat. destruct m.  simpl. apply ex_falso_quodlibet. 
+apply H.  reflexivity. simpl. reflexivity.
+intros. unfold not in H.  simpl.   destruct m.  simpl. reflexivity. 
+ apply IHn.  unfold not. intros.  apply H. apply f_equal.  exact H0. 
+Qed. 
 (** [] *)
+
+Tactic Notation "s" := simpl. 
 
 (** **** Exercise: 2 stars, optional (beq_nat_false)  *)
 Theorem beq_nat_false : forall n m,
   beq_nat n m = false -> n <> m.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intro.  induction n . intros. unfold not.  intros.  rewrite <- H0 in H. simpl in H. inversion H.
+ intros.  unfold not.  intros. rewrite <- H0 in H.  simpl in H. SearchAbout beq_nat. rewrite <- beq_nat_refl in H.
+inversion H. 
+Qed.
+
 (** [] *)
 
 
